@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpdesk Node Fullstack</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <nav>
+      <strong>Helpdesk Pro</strong>
+      <span>Node.js + JavaScript</span>
+    </nav>
+
+    <section>
+      <p class="eyebrow">Sistema full-stack</p>
+      <h1>Gestão de chamados com API própria</h1>
+      <p>Abra, acompanhe, filtre e resolva chamados usando Node.js puro no back-end e uma interface moderna no front-end.</p>
+    </section>
+  </header>
+
+  <main class="layout">
+    <section class="panel form-panel">
+      <div class="section-title">
+        <p class="eyebrow">Novo chamado</p>
+        <h2>Registrar atendimento</h2>
+      </div>
+
+      <form id="ticketForm">
+        <label>
+          Cliente
+          <input name="customer" required minlength="3" placeholder="Ex: Loja Horizonte" />
+        </label>
+        <label>
+          Assunto
+          <input name="subject" required minlength="5" placeholder="Ex: Falha ao confirmar pedido" />
+        </label>
+        <div class="form-grid">
+          <label>
+            Prioridade
+            <select name="priority">
+              <option value="baixa">Baixa</option>
+              <option value="media" selected>Média</option>
+              <option value="alta">Alta</option>
+              <option value="urgente">Urgente</option>
+            </select>
+          </label>
+          <label>
+            Canal
+            <select name="channel">
+              <option value="email">Email</option>
+              <option value="chat">Chat</option>
+              <option value="telefone">Telefone</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Responsável
+          <input name="assignee" placeholder="Ex: Wesley" />
+        </label>
+        <label>
+          Observações
+          <textarea name="notes" rows="4" placeholder="Descreva o problema do cliente"></textarea>
+        </label>
+        <button type="submit">Criar chamado</button>
+      </form>
+    </section>
+
+    <section class="content">
+      <section class="stats" id="stats"></section>
+
+      <section class="panel">
+        <div class="section-title row">
+          <div>
+            <p class="eyebrow">Atendimento</p>
+            <h2>Fila de chamados</h2>
+          </div>
+          <button class="ghost" id="refreshBtn">Atualizar</button>
+        </div>
+
+        <div class="filters">
+          <input id="searchInput" type="search" placeholder="Buscar por cliente, assunto ou responsável" />
+          <select id="statusFilter">
+            <option value="">Todos os status</option>
+            <option value="aberto">Aberto</option>
+            <option value="andamento">Em andamento</option>
+            <option value="resolvido">Resolvido</option>
+          </select>
+          <select id="priorityFilter">
+            <option value="">Todas prioridades</option>
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </div>
+
+        <div class="ticket-list" id="ticketList"></div>
+      </section>
+    </section>
+  </main>
+
+  <template id="ticketTemplate">
+    <article class="ticket">
+      <div class="ticket-head">
+        <div>
+          <span class="badge priority"></span>
+          <h3></h3>
+          <p class="customer"></p>
+        </div>
+        <select class="status-select">
+          <option value="aberto">Aberto</option>
+          <option value="andamento">Em andamento</option>
+          <option value="resolvido">Resolvido</option>
+        </select>
+      </div>
+      <p class="notes"></p>
+      <footer>
+        <span class="meta"></span>
+        <button class="danger">Excluir</button>
+      </footer>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
