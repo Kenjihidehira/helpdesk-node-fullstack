@@ -1,0 +1,22 @@
+{
+  "name": "helpdesk-node-fullstack",
+  "version": "1.0.0",
+  "description": "Sistema helpdesk full-stack com Node.js puro, API REST, dashboard web e testes.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "node",
+    "api",
+    "helpdesk",
+    "fullstack",
+    "javascript"
+  ],
+  "author": "Kenjihidehira",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
