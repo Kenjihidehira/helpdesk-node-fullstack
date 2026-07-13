@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "generatedAt": "2026-07-08T16:00:00.000Z",
+    "now": "2026-07-08T16:00:00.000Z"
+  },
+  "sla": {
+    "urgent": 30,
+    "high": 90,
+    "medium": 240,
+    "low": 720
+  },
+  "customers": [
+    { "id": "cust-101", "name": "Aster Retail", "plan": "Enterprise", "mrr": 12800 },
+    { "id": "cust-102", "name": "Bright Clinics", "plan": "Business", "mrr": 6400 },
+    { "id": "cust-103", "name": "Nova Parts", "plan": "Starter", "mrr": 900 },
+    { "id": "cust-104", "name": "Atlas Logistics", "plan": "Enterprise", "mrr": 15800 }
+  ],
+  "agents": [
+    { "id": "ag-1", "name": "Maya Costa", "skills": ["billing", "priority"], "capacity": 6 },
+    { "id": "ag-2", "name": "Theo Martins", "skills": ["technical", "api"], "capacity": 5 },
+    { "id": "ag-3", "name": "Lina Souza", "skills": ["onboarding", "billing"], "capacity": 4 },
+    { "id": "ag-4", "name": "Ravi Chen", "skills": ["technical", "priority"], "capacity": 5 }
+  ],
+  "tickets": [
+    {
+      "id": "TCK-2401",
+      "subject": "Falhas no checkout após troca de gateway de pagamento",
+      "customerId": "cust-101",
+      "priority": "urgent",
+      "category": "technical",
+      "status": "open",
+      "assignedTo": "ag-4",
+      "createdAt": "2026-07-08T15:10:00.000Z",
+      "firstResponseAt": null,
+      "tags": ["checkout", "revenue-risk"]
+    },
+    {
+      "id": "TCK-2402",
+      "subject": "Exportação de invoice sem identificador fiscal",
+      "customerId": "cust-102",
+      "priority": "high",
+      "category": "billing",
+      "status": "pending",
+      "assignedTo": "ag-1",
+      "createdAt": "2026-07-08T13:20:00.000Z",
+      "firstResponseAt": "2026-07-08T13:55:00.000Z",
+      "tags": ["invoice"]
+    },
+    {
+      "id": "TCK-2403",
+      "subject": "Precisa de checklist de onboarding para novo armazém",
+      "customerId": "cust-103",
+      "priority": "medium",
+      "category": "onboarding",
+      "status": "open",
+      "assignedTo": "ag-3",
+      "createdAt": "2026-07-08T11:45:00.000Z",
+      "firstResponseAt": null,
+      "tags": ["setup"]
+    },
+    {
+      "id": "TCK-2404",
+      "subject": "Limite da API bloqueia sincronização noturna",
+      "customerId": "cust-104",
+      "priority": "urgent",
+      "category": "api",
+      "status": "open",
+      "assignedTo": null,
+      "createdAt": "2026-07-08T15:35:00.000Z",
+      "firstResponseAt": null,
+      "tags": ["api", "sync"]
+    },
+    {
+      "id": "TCK-2405",
+      "subject": "Dúvida sobre upgrade do plano de suporte",
+      "customerId": "cust-103",
+      "priority": "low",
+      "category": "billing",
+      "status": "resolved",
+      "assignedTo": "ag-1",
+      "createdAt": "2026-07-07T16:00:00.000Z",
+      "firstResponseAt": "2026-07-07T16:40:00.000Z",
+      "resolvedAt": "2026-07-07T17:20:00.000Z",
+      "csat": 5,
+      "tags": ["upgrade"]
+    }
+  ],
+  "messages": [
+    { "ticketId": "TCK-2401", "author": "customer", "body": "Pedidos estão falhando após a troca do gateway.", "createdAt": "2026-07-08T15:10:00.000Z" },
+    { "ticketId": "TCK-2402", "author": "agent", "body": "Encontramos o mapeamento da exportação e estamos preparando um patch.", "createdAt": "2026-07-08T13:55:00.000Z" },
+    { "ticketId": "TCK-2404", "author": "customer", "body": "A sincronização noturna está bloqueada e o despacho começa em duas horas.", "createdAt": "2026-07-08T15:35:00.000Z" }
+  ]
+}

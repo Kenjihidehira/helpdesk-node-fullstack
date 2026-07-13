@@ -1,235 +1,123 @@
-const http = require("node:http");
-const fs = require("node:fs/promises");
-const path = require("node:path");
-const { TicketStorage } = require("./storage");
+import { createServer as createHttpServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { extname, join, normalize } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { dirname } from "node:path";
+import { loadSeed, cloneData } from "./storage.js";
+import { addReply, createTicket, getDashboard, listTickets, buildTicketView, runAutomation } from "./helpdeskService.js";
 
-const defaultDataFile = path.join(process.cwd(), "data", "tickets.json");
-const defaultPublicDir = path.join(__dirname, "..", "public");
-const allowedStatuses = ["aberto", "andamento", "resolvido"];
-const allowedPriorities = ["baixa", "media", "alta", "urgente"];
+const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
+const publicDir = join(rootDir, "public");
 
-function json(response, status, payload) {
-  response.writeHead(status, {
-    "Content-Type": "application/json; charset=utf-8",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type"
-  });
-  response.end(JSON.stringify(payload));
+const mimeTypes = {
+  ".html": "text/html; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml"
+};
+
+function sendJson(res, status, payload) {
+  res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+  res.end(JSON.stringify(payload));
 }
 
-function getMime(filePath) {
-  const extension = path.extname(filePath);
-  const types = {
-    ".html": "text/html; charset=utf-8",
-    ".css": "text/css; charset=utf-8",
-    ".js": "text/javascript; charset=utf-8",
-    ".json": "application/json; charset=utf-8"
-  };
-  return types[extension] || "application/octet-stream";
-}
-
-async function body(request) {
-  return new Promise((resolve, reject) => {
-    let data = "";
-
-    request.on("data", (chunk) => {
-      data += chunk;
-      if (data.length > 1_000_000) {
-        reject(new Error("Payload muito grande."));
-        request.destroy();
-      }
-    });
-
-    request.on("end", () => {
-      if (!data) {
-        resolve({});
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(data));
-      } catch {
-        reject(new Error("JSON inválido."));
-      }
-    });
+function sendError(res, error) {
+  sendJson(res, error.status || 500, {
+    error: error.message || "Erro interno do servidor"
   });
 }
 
-function validateTicket(data, partial = false) {
-  if (!partial || data.customer !== undefined) {
-    if (!data.customer || String(data.customer).trim().length < 3) {
-      return "Informe um cliente com pelo menos 3 caracteres.";
-    }
+async function parseBody(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  if (!chunks.length) return {};
+  try {
+    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  } catch {
+    const error = new Error("Invalid JSON body");
+    error.status = 400;
+    throw error;
   }
-
-  if (!partial || data.subject !== undefined) {
-    if (!data.subject || String(data.subject).trim().length < 5) {
-      return "Informe um assunto com pelo menos 5 caracteres.";
-    }
-  }
-
-  if (data.status && !allowedStatuses.includes(data.status)) {
-    return "Status inválido.";
-  }
-
-  if (data.priority && !allowedPriorities.includes(data.priority)) {
-    return "Prioridade inválida.";
-  }
-
-  return null;
 }
 
-function filterTickets(tickets, searchParams) {
-  const status = searchParams.get("status");
-  const priority = searchParams.get("priority");
-  const search = searchParams.get("search")?.trim().toLowerCase();
-
-  return tickets.filter((ticket) => {
-    const searchable = `${ticket.customer} ${ticket.subject} ${ticket.assignee} ${ticket.channel}`.toLowerCase();
-    return (!status || ticket.status === status)
-      && (!priority || ticket.priority === priority)
-      && (!search || searchable.includes(search));
-  });
-}
-
-function calculateStats(tickets) {
-  const byStatus = Object.fromEntries(allowedStatuses.map((status) => [status, 0]));
-  const byPriority = Object.fromEntries(allowedPriorities.map((priority) => [priority, 0]));
-
-  tickets.forEach((ticket) => {
-    byStatus[ticket.status] = (byStatus[ticket.status] || 0) + 1;
-    byPriority[ticket.priority] = (byPriority[ticket.priority] || 0) + 1;
-  });
-
-  return {
-    total: tickets.length,
-    open: byStatus.aberto,
-    inProgress: byStatus.andamento,
-    resolved: byStatus.resolvido,
-    critical: byPriority.urgente + byPriority.alta,
-    byStatus,
-    byPriority
-  };
-}
-
-async function serveStatic(response, url, publicDir) {
-  const requestedPath = url.pathname === "/" ? "/index.html" : url.pathname;
-  const safePath = path.normalize(decodeURIComponent(requestedPath)).replace(/^(\.\.[/\\])+/, "");
-  const filePath = path.join(publicDir, safePath);
+async function serveStatic(req, res) {
+  const requested = new URL(req.url, "http://localhost").pathname;
+  const cleanPath = requested === "/" ? "/index.html" : requested;
+  const filePath = normalize(join(publicDir, cleanPath));
 
   if (!filePath.startsWith(publicDir)) {
-    json(response, 403, { error: "Acesso negado." });
+    res.writeHead(403);
+    res.end("Proibido");
     return;
   }
 
   try {
-    const file = await fs.readFile(filePath);
-    response.writeHead(200, { "Content-Type": getMime(filePath) });
-    response.end(file);
+    const file = await readFile(filePath);
+    res.writeHead(200, { "content-type": mimeTypes[extname(filePath)] || "application/octet-stream" });
+    res.end(file);
   } catch {
-    json(response, 404, { error: "Arquivo não encontrado." });
+    res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+    res.end("Não encontrado");
   }
 }
 
-function createServer(options = {}) {
-  const storage = new TicketStorage(options.dataFile || defaultDataFile);
-  const publicDir = options.publicDir || defaultPublicDir;
+export async function createServer(seed) {
+  const state = cloneData(seed || await loadSeed());
 
-  return http.createServer(async (request, response) => {
-    const url = new URL(request.url, `http://${request.headers.host}`);
-    const segments = url.pathname.split("/").filter(Boolean);
-
-    if (request.method === "OPTIONS") {
-      json(response, 204, {});
-      return;
-    }
+  return createHttpServer(async (req, res) => {
+    const url = new URL(req.url, "http://localhost");
 
     try {
-      if (url.pathname.startsWith("/api/")) {
-        if (request.method === "GET" && url.pathname === "/api/health") {
-          json(response, 200, { status: "ok", service: "helpdesk-node-fullstack" });
-          return;
-        }
-
-        if (request.method === "GET" && url.pathname === "/api/tickets") {
-          const tickets = await storage.all();
-          json(response, 200, { data: filterTickets(tickets, url.searchParams) });
-          return;
-        }
-
-        if (request.method === "GET" && url.pathname === "/api/stats") {
-          const tickets = await storage.all();
-          json(response, 200, { data: calculateStats(tickets) });
-          return;
-        }
-
-        if (request.method === "POST" && url.pathname === "/api/tickets") {
-          const payload = await body(request);
-          const error = validateTicket(payload);
-
-          if (error) {
-            json(response, 422, { error });
-            return;
-          }
-
-          const ticket = await storage.create(payload);
-          json(response, 201, { data: ticket });
-          return;
-        }
-
-        if (segments[0] === "api" && segments[1] === "tickets" && segments[2]) {
-          const id = segments[2];
-
-          if (request.method === "PATCH") {
-            const payload = await body(request);
-            const error = validateTicket(payload, true);
-
-            if (error) {
-              json(response, 422, { error });
-              return;
-            }
-
-            const ticket = await storage.update(id, payload);
-
-            if (!ticket) {
-              json(response, 404, { error: "Chamado não encontrado." });
-              return;
-            }
-
-            json(response, 200, { data: ticket });
-            return;
-          }
-
-          if (request.method === "DELETE") {
-            const deleted = await storage.delete(id);
-
-            if (!deleted) {
-              json(response, 404, { error: "Chamado não encontrado." });
-              return;
-            }
-
-            json(response, 200, { deleted: true });
-            return;
-          }
-        }
-
-        json(response, 404, { error: "Rota não encontrada." });
-        return;
+      if (url.pathname === "/api/health" && req.method === "GET") {
+        return sendJson(res, 200, { ok: true, service: "resolvedesk-sla-hub" });
       }
 
-      await serveStatic(response, url, publicDir);
+      if (url.pathname === "/api/dashboard" && req.method === "GET") {
+        return sendJson(res, 200, getDashboard(state));
+      }
+
+      if (url.pathname === "/api/tickets" && req.method === "GET") {
+        return sendJson(res, 200, {
+          tickets: listTickets(state, Object.fromEntries(url.searchParams.entries()))
+        });
+      }
+
+      if (url.pathname === "/api/tickets" && req.method === "POST") {
+        return sendJson(res, 201, createTicket(state, await parseBody(req)));
+      }
+
+      const replyMatch = url.pathname.match(/^\/api\/tickets\/([^/]+)\/replies$/);
+      if (replyMatch && req.method === "POST") {
+        return sendJson(res, 200, addReply(state, replyMatch[1], await parseBody(req)));
+      }
+
+      const ticketMatch = url.pathname.match(/^\/api\/tickets\/([^/]+)$/);
+      if (ticketMatch && req.method === "GET") {
+        const ticket = state.tickets.find((item) => item.id === ticketMatch[1]);
+        if (!ticket) return sendJson(res, 404, { error: "Ticket não encontrado" });
+        return sendJson(res, 200, buildTicketView(ticket, state));
+      }
+
+      if (url.pathname === "/api/automation/run" && req.method === "POST") {
+        return sendJson(res, 200, runAutomation(state));
+      }
+
+      if (req.method === "GET") {
+        return serveStatic(req, res);
+      }
+
+      sendJson(res, 404, { error: "Rota não encontrada" });
     } catch (error) {
-      json(response, 400, { error: error.message });
+      sendError(res, error);
     }
   });
 }
 
-if (require.main === module) {
-  const port = Number(process.env.PORT || 3333);
-  createServer().listen(port, () => {
-    console.log(`Helpdesk rodando em http://localhost:${port}`);
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const port = Number(process.env.PORT || 3000);
+  const server = await createServer();
+  server.listen(port, () => {
+    console.log("ResolveDesk SLA Hub running on http://localhost:" + port);
   });
 }
-
-module.exports = { createServer, calculateStats, filterTickets };
