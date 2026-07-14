@@ -1,0 +1,35 @@
+:root { color-scheme: light; }
+body { background: #edf5f7; color: #20313a; font-family: "Segoe UI", Arial, sans-serif; }
+.shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100vh; }
+.sidebar { position: sticky; top: 0; width: auto; height: 100vh; padding: 26px 18px; background: #fff; border-right: 1px solid #b8ced5; }
+.brand { padding-bottom: 22px; border-bottom: 1px solid #c9dbe0; }
+.brand-mark { border-radius: 8px; background: #00a7b5; color: #fff; }
+.brand strong { color: #20313a; }
+.brand small { color: #68818c; }
+.sidebar nav a { border-radius: 6px; color: #49626d; border: 1px solid transparent; }
+.sidebar nav a:hover { background: #e1f7f8; color: #087d87; border-color: #a7dde0; }
+.workspace { min-width: 0; padding: 26px 30px 44px; }
+.hero { border: 0; border-radius: 0; background: transparent; padding: 10px 0 24px; border-bottom: 1px solid #a9c4cc; }
+.hero h1 { max-width: 850px; color: #20313a; font-size: clamp(34px, 5vw, 58px); line-height: 1; font-weight: 650; }
+.eyebrow { color: #008c98; }
+.hero button { border-radius: 6px; background: #ff6f61; color: #fff; box-shadow: 0 4px 0 #c5493f; }
+.kpi-grid { gap: 10px; }
+.kpi-grid article { border: 1px solid #b8ced5; border-radius: 8px; background: #fff; box-shadow: none; }
+.kpi-grid article strong { color: #20313a; }
+.content-grid { grid-template-columns: minmax(0, 1.6fr) minmax(280px, .8fr); gap: 14px; }
+.panel { border: 1px solid #b8ced5; border-radius: 8px; background: #fff; box-shadow: none; }
+.panel-head { border-bottom: 1px solid #c9dbe0; }
+.queue-panel { min-height: 520px; }
+.ticket-list > * { border-left: 4px solid #00a7b5; border-radius: 4px; background: #f8fbfc; }
+.agent-list > * { border-radius: 4px; background: #f4f8f9; }
+.stamp { border-radius: 4px; background: #e1f7f8; color: #087d87; }
+.automation-band { border: 0; border-radius: 8px; background: #20313a; color: #fff; box-shadow: inset 8px 0 #ff6f61; }
+.automation-band h2, .automation-band .eyebrow { color: #fff; }
+.automation-list > * { border-color: #52666f; background: #2b3d46; }
+@media (max-width: 900px) {
+  .shell { display: block; }
+  .sidebar { position: static; height: auto; }
+  .sidebar nav { display: flex; flex-wrap: wrap; }
+  .content-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) { .workspace { padding: 18px 12px 36px; } .kpi-grid { grid-template-columns: 1fr 1fr; } }
