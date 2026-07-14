@@ -36,7 +36,7 @@
     },
     {
       "id": "TCK-2402",
-      "subject": "Exportação de invoice sem identificador fiscal",
+      "subject": "Exportação de fatura sem identificador fiscal",
       "customerId": "cust-102",
       "priority": "high",
       "category": "billing",
@@ -48,7 +48,7 @@
     },
     {
       "id": "TCK-2403",
-      "subject": "Precisa de checklist de onboarding para novo armazém",
+      "subject": "Precisa de checklist de integração para novo armazém",
       "customerId": "cust-103",
       "priority": "medium",
       "category": "onboarding",

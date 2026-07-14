@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
-  <title id="title">Preview do dashboard ResolveDesk SLA Hub</title>
-  <desc id="desc">Dashboard escuro de helpdesk com risco de SLA, fila de tickets, carga dos agentes e painel de automação.</desc>
+  <title id="title">Prévia do painel ResolveDesk SLA Hub</title>
+  <desc id="desc">Painel escuro de suporte com risco de SLA, fila de chamados, carga dos agentes e automação.</desc>
   <rect width="1280" height="760" fill="#08111f"/>
   <rect x="40" y="36" width="1200" height="688" rx="24" fill="#0d1728" stroke="#243854"/>
   <text x="76" y="92" fill="#f7fbff" font-family="Arial" font-size="34" font-weight="700">ResolveDesk SLA Hub</text>
@@ -37,9 +37,9 @@
     <rect x="108" y="538" width="640" height="54" rx="14"/>
   </g>
   <g font-family="Arial" font-size="15" fill="#d8e7f7">
-    <text x="132" y="436">TCK-2401 - Checkout failures after gateway switch</text>
-    <text x="132" y="504">TCK-2404 - API rate limit blocks nightly sync</text>
-    <text x="132" y="572">TCK-2403 - Onboarding checklist for warehouse</text>
+    <text x="132" y="436">TCK-2401 - Falhas no pagamento após troca de gateway</text>
+    <text x="132" y="504">TCK-2404 - Limite da API bloqueia sincronização noturna</text>
+    <text x="132" y="572">TCK-2403 - Checklist de integração do armazém</text>
   </g>
   <rect x="828" y="326" width="320" height="332" rx="22" fill="#101b2c" stroke="#243854"/>
   <text x="860" y="374" fill="#f7fbff" font-family="Arial" font-size="22" font-weight="700">Carga dos agentes</text>

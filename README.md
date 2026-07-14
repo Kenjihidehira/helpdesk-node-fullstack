@@ -9,7 +9,7 @@ O projeto é intencionalmente comercial: demonstra um fluxo de negócio que um c
 - Reduz quebras de SLA ao ordenar tickets por risco e tempo de espera.
 - Mostra carga dos agentes, pressão da fila aberta e impacto do plano do cliente.
 - Simula automações de atribuição, marcação de atraso e alertas executivos.
-- Entrega dashboard polido com endpoints de API documentados.
+- Entrega painel polido com endpoints de API documentados.
 - Roda sem serviços externos, o que facilita demonstração em propostas.
 
 ## Funcionalidades
@@ -18,18 +18,18 @@ O projeto é intencionalmente comercial: demonstra um fluxo de negócio que um c
 - Motor de SLA que calcula prazo, quebra e tickets próximos do vencimento.
 - Resumo de carga dos agentes com capacidade e aderência por habilidade.
 - Automação que atribui tickets sem dono e marca problemas críticos.
-- Timeline do cliente e API de respostas.
-- Dados seed para cenários realistas de demonstração.
+- Linha do tempo do cliente e API de respostas.
+- Dados de exemplo para cenários realistas de demonstração.
 - Testes de API, regras de negócio e smoke test.
-- Dockerfile e notas de deploy.
+- Dockerfile e notas de publicação.
 
 ## Stack
 
 - Node.js 20+ com servidor HTTP nativo
 - ES modules
-- Frontend em JavaScript puro
-- UI de dashboard em CSS
-- Armazenamento seed em JSON
+- Interface em JavaScript puro
+- Interface do painel em CSS
+- Armazenamento de exemplo em JSON
 - Test runner nativo do Node
 
 ## Como Rodar Localmente
@@ -54,7 +54,7 @@ Você pode alterar a porta:
 PORT=4182 npm start
 ```
 
-## Preview da API
+## Prévia da API
 
 Principais endpoints:
 
@@ -70,7 +70,7 @@ Veja [docs/api-endpoints.md](docs/api-endpoints.md) para payloads e exemplos.
 
 ## Dados de Demonstração
 
-Os dados demo ficam em [data/seed.json](data/seed.json) e incluem:
+Os dados de demonstração ficam em [data/seed.json](data/seed.json) e incluem:
 
 - 5 tickets
 - 4 clientes
@@ -78,7 +78,7 @@ Os dados demo ficam em [data/seed.json](data/seed.json) e incluem:
 - regras de SLA por prioridade
 - histórico de mensagens
 
-## Deploy
+## Publicação
 
 Docker:
 
@@ -102,5 +102,5 @@ Use `PORT` do ambiente da plataforma ao publicar em Render, Railway, Fly.io ou s
 - Adicionar autenticação e permissões por perfil.
 - Adicionar notificações por email ou WhatsApp.
 - Adicionar anexos e notas internas.
-- Adicionar logs de auditoria para compliance.
+- Adicionar registros de auditoria para conformidade.
 - Adicionar webhooks para CRM e sistemas de cobrança.

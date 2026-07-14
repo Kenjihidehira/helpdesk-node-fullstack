@@ -60,6 +60,6 @@ Executa o motor de automação demo:
 
 - atribui tickets sem dono para agentes qualificados
 - marca tickets vencidos
-- sinaliza problemas urgentes de contas enterprise
+- sinaliza problemas urgentes de contas corporativas
 
 O projeto mantém os dados em memória por segurança de demonstração.

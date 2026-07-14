@@ -14,7 +14,7 @@ const kpiLabels = {
 
 async function getDashboard() {
   const response = await fetch("/api/dashboard");
-  if (!response.ok) throw new Error("Falha ao carregar dashboard");
+  if (!response.ok) throw new Error("Falha ao carregar o painel");
   return response.json();
 }
 
@@ -35,7 +35,7 @@ function renderQueue(queue) {
       "<article class=\"ticket\">",
       "<div class=\"ticket-top\"><h3>" + ticket.id + " - " + ticket.subject + "</h3><span class=\"badge " + badge + "\">" + badgeText + "</span></div>",
       "<p>" + ticket.customer.name + " - " + translatePlan(ticket.customer.plan) + " - " + (ticket.agent?.name || "Sem responsável") + "</p>",
-      "<p>Score SLA " + ticket.sla.score + " - vence " + new Date(ticket.sla.dueAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "</p>",
+      "<p>Pontuação SLA " + ticket.sla.score + " - vence " + new Date(ticket.sla.dueAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "</p>",
       "</article>"
     ].join("");
   }).join("");
@@ -58,7 +58,7 @@ function translatePriority(priority) {
 }
 
 function translatePlan(plan) {
-  return { Enterprise: "Enterprise", Business: "Business", Starter: "Inicial" }[plan] || plan;
+  return { Enterprise: "Corporativo", Business: "Empresarial", Starter: "Inicial" }[plan] || plan;
 }
 
 function renderAutomation(actions) {

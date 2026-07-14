@@ -1,7 +1,7 @@
 {
   "name": "helpdesk-node-fullstack",
   "version": "2.0.0",
-  "description": "ResolveDesk SLA Hub - dashboard e API comercial de helpdesk para fila de tickets, risco de SLA e automação de suporte.",
+  "description": "ResolveDesk SLA Hub - painel e API comercial de suporte para fila de chamados, risco de SLA e automação.",
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
